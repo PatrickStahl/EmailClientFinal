@@ -113,6 +113,7 @@ public class MainScreen implements Initializable {
                 }
             };
 
+
             cell.setOnMouseClicked(e ->
             {
                 System.out.println(table.getSelectionModel().getSelectedIndex());

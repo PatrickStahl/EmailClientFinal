@@ -58,7 +58,7 @@ public class SaveLoad
         Message[] messages = inbox.getMessages();
         System.out.println("Anzahl im Postfach: " + messages.length);
         System.out.println("Anzahl im Ordner: " + folder.listFiles().length);
-        for (int i = folder.listFiles().length; i< 5; i++)
+        for (int i = folder.listFiles().length; i< messages.length; i++)
         {
             try
             {

@@ -38,7 +38,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -104,15 +103,6 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </Button>
-                  <AnchorPane fx:id="progressPane" prefHeight="37.0" prefWidth="163.0">
-                     <children>
-                        <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="156.0" progress="0.0" />
-                        <Label fx:id="progressBarStatus" layoutX="3.0" layoutY="19.0" />
-                     </children>
-                     <HBox.margin>
-                        <Insets left="20.0" right="20.0" />
-                     </HBox.margin>
-                  </AnchorPane>
                </children>
             </HBox>
             <TableView fx:id="table" editable="true" layoutY="69.0" prefHeight="260.0" prefWidth="864.0">
