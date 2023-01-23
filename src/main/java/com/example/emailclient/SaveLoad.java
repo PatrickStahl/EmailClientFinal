@@ -7,11 +7,16 @@ import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,9 +27,9 @@ import java.util.*;
 
 public class SaveLoad
 {
-    public void download(String host, String email, String password, Integer port) throws MessagingException {
+    public boolean download(String username, String host, String email, String password, Integer port) throws MessagingException, IOException {
 
-        File folder = new File("C:\\mails");
+        File folder = new File("C:\\mails\\" + username);
 
         Boolean ssl = false;
         java.util.Properties properties = new java.util.Properties();
@@ -50,7 +55,16 @@ public class SaveLoad
         else
         {
             store = new POP3Store(session, null);
-            store.connect(host, port, email, password);
+            try
+            {
+                store.connect(host, port, email, password);
+            }
+            catch(MessagingException m)
+            {
+                showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
+                return false;
+            }
+            //TODO hier falsches Passwort fehlermeldung machen
             inbox = store.getFolder("INBOX");
         }
 
@@ -62,8 +76,8 @@ public class SaveLoad
         {
             try
             {
-                messages[i].writeTo(new FileOutputStream(new File("C:\\mails\\mail" + (i+1) + ".eml")));
-                setFileCreationDate("C:\\mails\\mail" + (i+1) + ".eml", messages[i].getSentDate());
+                messages[i].writeTo(new FileOutputStream(new File("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml")));
+                setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
             }
             catch (IOException e)
             {
@@ -71,6 +85,7 @@ public class SaveLoad
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
 
@@ -101,9 +116,9 @@ public class SaveLoad
         attributes.setTimes(time, time, time);
     }
 
-    public String loadBody(String subject) throws MessagingException, IOException
+    public String loadBody(String directory, String subject) throws MessagingException, IOException
     {
-        String path = "C:\\mails\\" + subject + ".eml";
+        String path = "C:\\mails\\" + directory + "\\" + subject + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
 
@@ -173,8 +188,8 @@ public class SaveLoad
     }
 
 
-    public String getSubject(String name) throws FileNotFoundException, MessagingException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public String getSubject(String directory, String name) throws FileNotFoundException, MessagingException {
+        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -246,8 +261,8 @@ public class SaveLoad
         }
     }
 
-    public String getFrom(String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public String getFrom(String directory, String name) throws MessagingException, FileNotFoundException {
+        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -274,8 +289,8 @@ public class SaveLoad
         return sender;
     }
 
-    public String getTo(String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public String getTo(String directory, String name) throws MessagingException, FileNotFoundException {
+        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -309,8 +324,8 @@ public class SaveLoad
         return receiver;
     }
 
-    public String getDate(String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public String getDate(String directory, String name) throws MessagingException, FileNotFoundException {
+        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -352,8 +367,8 @@ public class SaveLoad
         }
     }
 
-    public Date getSentDate(String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public Date getSentDate(String directory, String name) throws MessagingException, FileNotFoundException {
+        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -372,7 +387,18 @@ public class SaveLoad
         MimeMessage message = new MimeMessage(mailSession, source);
 
         return message.getHeader("X-Seen", null );
+    }
 
+    private void showError(String title, String message) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        AlertBox alertBox = fxmlLoader.getController();
+        alertBox.display(message);
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(root1));
+        stage.show();
     }
 
 }

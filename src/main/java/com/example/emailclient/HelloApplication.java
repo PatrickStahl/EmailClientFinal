@@ -23,5 +23,4 @@ public class HelloApplication extends Application {
     }
 }
 
-//TODO während des Ladens der Mails einen coolen Ladescreen einbauen
 //TODO Hilfe Fenster hinzufügen

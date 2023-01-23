@@ -38,7 +38,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="127.0" prefWidth="188.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.emailclient.AlertBox">
+<VBox alignment="CENTER" prefHeight="127.0" prefWidth="188.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.emailclient.AlertBox">
   <children>
   <Label fx:id="LabelText" alignment="CENTER" contentDisplay="CENTER" style="&#10;" text="LabelText" textAlignment="CENTER" textFill="#9f9f9f" wrapText="false">
          <font>
@@ -47,7 +47,13 @@
          <opaqueInsets>
             <Insets />
          </opaqueInsets>
+         <padding>
+            <Insets bottom="5.0" />
+         </padding>
   </Label>
-      <Button fx:id="okButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#okButtonClicked" prefHeight="25.0" prefWidth="52.0" text="OK" />
+      <Button fx:id="okButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#okButtonClicked" prefHeight="25.0" prefWidth="52.0" text="OK">
+         <VBox.margin>
+            <Insets top="5.0" />
+         </VBox.margin></Button>
   </children>
 </VBox>

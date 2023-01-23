@@ -53,6 +53,10 @@ public class SendMail {
     @FXML
     private TextField textFieldTo;
 
+    @FXML
+    private Button cancelButton;
+
+
     String CC = "";
     String username;
 
@@ -79,17 +83,17 @@ public class SendMail {
     }
 
     @FXML
+    void cancelButtonClicked(ActionEvent event)
+    {
+        Stage stage = (Stage) cancelButton.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
     void sendButtonClicked(ActionEvent event) throws IOException {
         if(textFieldFrom.getText().isEmpty() || textFieldTo.getText().isEmpty() || textFieldSubject.getText().isEmpty() || textFieldBody.getText().isEmpty())
         {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            AlertBox alertBox = fxmlLoader.getController();
-            alertBox.display("Füllen Sie alle Felder aus!");
-            Stage stage = new Stage();
-            stage.setTitle("Fehler");
-            stage.setScene(new Scene(root1));
-            stage.show();
+            showError("Fehler", "Füllen Sie alle Felder aus!");
         }
         else
         {
@@ -101,15 +105,9 @@ public class SendMail {
             }
             catch (MessagingException e)
             {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-                Parent root1 = (Parent) fxmlLoader.load();
-                AlertBox alertBox = fxmlLoader.getController();
-                alertBox.display("Email konnte mit diesen Daten nicht gesendet werden!");
-                Stage stage = new Stage();
-                stage.setTitle("Fehler");
-                stage.setScene(new Scene(root1));
-                stage.show();
-                e.printStackTrace();
+                showError("Fehler", "Email konnte mit diesen Daten nicht gesendet werden\nPrüfen Sie Ihre Eingaben");
+                Stage window = (Stage) sendButton.getScene().getWindow();
+                window.close();
             }
         }
     }
@@ -177,5 +175,17 @@ public class SendMail {
     public void setUsername(String username)
     {
         this.username = username;
+    }
+
+    private void showError(String title, String message) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        AlertBox alertBox = fxmlLoader.getController();
+        alertBox.display(message);
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(root1));
+        stage.show();
     }
 }

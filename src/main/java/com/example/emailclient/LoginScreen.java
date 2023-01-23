@@ -13,6 +13,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class LoginScreen {
@@ -53,15 +54,7 @@ public class LoginScreen {
     void confirmButtonClicked(ActionEvent event) throws IOException {
         if(username.getText().isEmpty() || password.getText().isEmpty() || inputServer.getText().isEmpty() || inputPort.getText().isEmpty() || outputPort.getText().isEmpty() || outputServer.getText().isEmpty() || email.getText().isEmpty())
         {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            AlertBox alertBox = fxmlLoader.getController();
-            alertBox.display("Füllen Sie alle Felder aus!");
-            Stage stage = new Stage();
-            stage.setTitle("Fehler");
-            stage.setScene(new Scene(root1));
-            stage.show();
-
+            showError("Fehler", "Füllen Sie alle Felder aus!");
         }
         else
         {
@@ -72,10 +65,13 @@ public class LoginScreen {
                 readWrite.write(data);
             }
 
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainScreen.fxml"));
             Parent root2 = fxmlLoader.load();
             MainScreen mainScreen = fxmlLoader.getController();
             mainScreen.setUserData(username.getText(), email.getText(), password.getText(), inputServer.getText(), Integer.valueOf(inputPort.getText()), outputServer.getText(), Integer.valueOf(outputPort.getText()));
+            mainScreen.setDirectoryName(username.getText());
+            mainScreen.initialize();
             Stage stage = new Stage();
             stage.setScene(new Scene(root2));
             stage.show();
@@ -89,6 +85,17 @@ public class LoginScreen {
     @FXML
     private void initialize()
     {
+        File filesDir = new File("C:\\files");
+        if(!filesDir.exists())
+        {
+            filesDir.mkdirs();
+        }
+        File mailsDir = new File("C:\\mails");
+        if(!mailsDir.exists())
+        {
+            mailsDir.mkdirs();
+        }
+
         chooseServer.getItems().addAll("POP3", "SMTP");
         chooseServer.setValue("POP3");
         inputServer.setText("smtp.uni-jena.de");
@@ -131,6 +138,17 @@ public class LoginScreen {
         email.setText(write.readEmail(usernameData));
     }
 
+    private void showError(String title, String message) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        AlertBox alertBox = fxmlLoader.getController();
+        alertBox.display(message);
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(root1));
+        stage.show();
+    }
 
 
 }

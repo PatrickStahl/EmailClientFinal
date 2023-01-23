@@ -31,26 +31,13 @@ public class ChooseData {
     private void initialize() throws IOException
     {
         String[] userAccounts = ChooseData.userAccounts();
-        if(userAccounts.length == 0)
-        {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            AlertBox alertBox = fxmlLoader.getController();
-            alertBox.display("Keine Daten vorhanden");
-            Stage stage = new Stage();
-            stage.setTitle("Fehler");
-            stage.setScene(new Scene(root1));
-            stage.show();
-            cancelButtonClicked();
-        }
-        for(int i = 0; i < userAccounts.length; i++)
-        {
+        for (int i = 0; i < userAccounts.length; i++) {
             String account = userAccounts[i].toString();
-            account = account.substring(0, account.length()-4);
+            account = account.substring(0, account.length() - 4);
             chooseData.getItems().addAll(account);
         }
         String firstAcc = userAccounts[0];
-        chooseData.setValue(firstAcc.substring(0,firstAcc.length()-4));
+        chooseData.setValue(firstAcc.substring(0, firstAcc.length() - 4));
     }
 
     @FXML
@@ -88,20 +75,12 @@ public class ChooseData {
                 }
                 catch (Exception e)
                 {
-                    System.out.println("Cant load new window");
-                    e.printStackTrace();
+
                 }
             }
             else
             {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-                Parent root1 = (Parent) fxmlLoader.load();
-                AlertBox alertBox = fxmlLoader.getController();
-                alertBox.display("Falsches Passwort");
-                Stage stage = new Stage();
-                stage.setTitle("Fehler");
-                stage.setScene(new Scene(root1));
-                stage.show();
+                showError("Fehler", "Falsches Passwort");
             }
         }
         catch (IOException e1)
@@ -111,20 +90,33 @@ public class ChooseData {
 
     }
 
-    private static String[] userAccounts()
+    private static String[] userAccounts() throws IOException
     {
         File folder = new File("C:\\files");
         File[] listOfFiles = folder.listFiles();
+
         String[] nameOfFiles = new String[listOfFiles.length];
 
         for (int i = 0; i < listOfFiles.length; i++)
         {
-            if (listOfFiles[i].isFile())
-            {
+            if (listOfFiles[i].isFile()) {
                 nameOfFiles[i] = listOfFiles[i].getName();
             }
         }
         return nameOfFiles;
+
+    }
+
+    private static void showError(String title, String message) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(ChooseData.class.getResource("AlertBox.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        AlertBox alertBox = fxmlLoader.getController();
+        alertBox.display(message);
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(root1));
+        stage.show();
     }
 
 }

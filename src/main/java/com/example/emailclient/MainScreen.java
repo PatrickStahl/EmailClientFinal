@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import javax.mail.Folder;
 import javax.mail.MessagingException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +28,7 @@ import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
-public class MainScreen implements Initializable {
+public class MainScreen {
 
 
     private String username, email, password, outPutServer, inputServer;
@@ -58,16 +59,21 @@ public class MainScreen implements Initializable {
     private TableView<Mail> table;
 
     @FXML
-    void refreshButtonClicked(ActionEvent event) throws MessagingException, IOException
-    {
+    void refreshButtonClicked(ActionEvent event) throws MessagingException, IOException {
         labelStatus.setText("Aktualisiere...");
-        refresh();
+        SaveLoad saveLoad = new SaveLoad();
+        Boolean checkIfContinue = saveLoad.download(username, outPutServer, email, password, outputPort);
+        if(checkIfContinue == false)
+        {
+            Stage stage = (Stage) refreshButton.getScene().getWindow();
+            stage.close();
+        }
+        loadData();
     }
 
 
     @FXML
-    void sendButtonClicked(ActionEvent event) throws IOException
-    {
+    void sendButtonClicked(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SendMail.fxml"));
         Parent root2 = fxmlLoader.load();
         SendMail sendMail = fxmlLoader.getController();
@@ -78,8 +84,7 @@ public class MainScreen implements Initializable {
         stage.show();
     }
 
-    public void initialize(URL url, ResourceBundle resourceBundle)
-    {
+    public void initialize() {
         table.getColumns().clear();
         table.setItems(list);
         initiateCols();
@@ -93,8 +98,7 @@ public class MainScreen implements Initializable {
         }
     }
 
-    private void initiateCols()
-    {
+    private void initiateCols() {
         SaveLoad saveLoad = new SaveLoad();
         columnSubject.setCellValueFactory(new PropertyValueFactory<Mail, String>("subject"));
         columnFrom.setCellValueFactory(new PropertyValueFactory<Mail, String>("from"));
@@ -103,11 +107,9 @@ public class MainScreen implements Initializable {
 
         columnSubject.setCellFactory(tc ->
         {
-            TableCell<Mail, String> cell = new TableCell<Mail, String>()
-            {
+            TableCell<Mail, String> cell = new TableCell<Mail, String>() {
                 @Override
-                protected void updateItem(String item, boolean empty)
-                {
+                protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
                     setText(empty ? null : item);
                 }
@@ -118,16 +120,16 @@ public class MainScreen implements Initializable {
             {
                 System.out.println(table.getSelectionModel().getSelectedIndex());
                 Integer index = cell.getIndex();
-                File folder = new File("C:\\mails");
+                File folder = new File("C:\\mails\\" + username + "\\");
                 index = abs((index - folder.listFiles().length));
                 String name = "mail" + index;
 
-                if(!cell.isEmpty())
+                if (!cell.isEmpty())
                 {
                     try
                     {
-                        loadMail(saveLoad.getSubject(name), saveLoad.getFrom(name), saveLoad.getTo(name), saveLoad.loadBody(name));
-                        saveLoad.addHeader("C:\\mails\\" + name + ".eml", "1", saveLoad.getSentDate(name));
+                        loadMail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.loadBody(username, name));
+                        saveLoad.addHeader("C:\\mails\\" + username + "\\" + name + ".eml", "1", saveLoad.getSentDate(username, name));
                     }
                     catch (IOException | MessagingException ex)
                     {
@@ -143,34 +145,32 @@ public class MainScreen implements Initializable {
     }
 
     //loads from PC
-    private void loadData() throws MessagingException, IOException
-    {
+    private void loadData() throws MessagingException, IOException {
         list.clear();
         list.removeAll();
-        File folder = new File("C:\\mails");
+        File folder = new File("C:\\mails\\" + username + "\\");
         File[] listOfFiles = folder.listFiles();
         //only null if user never received emails
-        Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
-
-
-        for (int i = 0; i < listOfFiles.length; i++)
-        {
-            if (listOfFiles[i].isFile())
-            {
-                SaveLoad saveLoad = new SaveLoad();
-                String name = listOfFiles[i].getName();
-                name = name.substring(0, name.length() - 4);
-                Mail currentMail = new Mail(saveLoad.getSubject(name), saveLoad.getFrom(name), saveLoad.getTo(name), saveLoad.getDate(name));
-                list.add(currentMail);
+        System.out.println(folder.toString());
+        if (listOfFiles != null) {
+            Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    SaveLoad saveLoad = new SaveLoad();
+                    String name = listOfFiles[i].getName();
+                    name = name.substring(0, name.length() - 4);
+                    Mail currentMail = new Mail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.getDate(username, name));
+                    list.add(currentMail);
+                }
             }
+            table.setItems(list);
+            table.refresh();
+            labelStatus.setText("");
         }
-        table.setItems(list);
-        table.refresh();
-        labelStatus.setText("");
+
     }
 
-    public void loadMail(String subject, String from, String to, String body) throws IOException
-    {
+    public void loadMail(String subject, String from, String to, String body) throws IOException {
         SaveLoad safeLoad = new SaveLoad();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("OpenMail.fxml"));
         Parent root1 = (Parent) fxmlLoader.load();
@@ -181,14 +181,13 @@ public class MainScreen implements Initializable {
         stage.show();
     }
 
-    public void refresh() throws MessagingException, IOException {
-        SaveLoad saveLoad = new SaveLoad();
-        saveLoad.download(outPutServer, email, password, outputPort);
-        loadData();
-    }
+//    public void refresh() throws MessagingException, IOException {
+//        SaveLoad saveLoad = new SaveLoad();
+//        saveLoad.download(username, outPutServer, email, password, outputPort);
+//        loadData();
+//    }
 
-    public void setUserData(String username, String email, String password, String inputServer, Integer inputPort, String outPutServer, Integer outputPort)
-    {
+    public void setUserData(String username, String email, String password, String inputServer, Integer inputPort, String outPutServer, Integer outputPort) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -199,16 +198,13 @@ public class MainScreen implements Initializable {
     }
 
 
-
-    public static class Mail
-    {
+    public static class Mail {
         private final SimpleStringProperty subject;
         private final SimpleStringProperty from;
         private final SimpleStringProperty to;
         private final SimpleStringProperty date;
 
-        public Mail(String subject, String from, String to, String date)
-        {
+        public Mail(String subject, String from, String to, String date) {
             this.subject = new SimpleStringProperty(subject);
             this.from = new SimpleStringProperty(from);
             this.to = new SimpleStringProperty(to);
@@ -262,7 +258,13 @@ public class MainScreen implements Initializable {
         public void setDate(String date) {
             this.date.set(date);
         }
-
     }
 
+
+    public void setDirectoryName(String name) {
+        File directory = new File("C:\\mails\\" + name);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+    }
 }

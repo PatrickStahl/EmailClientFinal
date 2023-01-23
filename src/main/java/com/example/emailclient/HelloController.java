@@ -9,6 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+
 public class HelloController {
 
     @FXML
@@ -46,18 +49,38 @@ public class HelloController {
     {
         try
         {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChooseData.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Wähle Daten");
-            stage.setScene(new Scene(root1));
-            stage.show();
+            File folder = new File("C:\\files");
+            File[] listOfFiles = folder.listFiles();
+            if(listOfFiles.length == 0)
+            {
+                showError("Fehler", "Keine Daten vorhanden");
+            }
+            else
+            {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChooseData.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setTitle("Wähle Daten");
+                stage.setScene(new Scene(root1));
+                stage.show();
+            }
         }
         catch (Exception e)
         {
             System.out.println("Cant load new window");
             e.printStackTrace();
         }
+    }
+    private void showError(String title, String message) throws IOException
+    {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
+        Parent root1 = (Parent) fxmlLoader.load();
+        AlertBox alertBox = fxmlLoader.getController();
+        alertBox.display(message);
+        Stage stage = new Stage();
+        stage.setTitle(title);
+        stage.setScene(new Scene(root1));
+        stage.show();
     }
 
 }
