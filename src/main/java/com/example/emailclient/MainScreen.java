@@ -6,33 +6,28 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import javax.mail.Folder;
 import javax.mail.MessagingException;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.ResourceBundle;
 
 import static java.lang.Math.abs;
 
 public class MainScreen {
 
 
-    private String username, email, password, outPutServer, inputServer;
-    private Integer inputPort, outputPort;
+    private String username;
+    private String email;
+    private String password;
+    private String outPutServer;
+    private Integer outputPort;
     ObservableList<Mail> list = FXCollections.observableArrayList();
     @FXML
     private TableColumn<Mail, String> columnDate;
@@ -53,17 +48,14 @@ public class MainScreen {
     private Button refreshButton;
 
     @FXML
-    private Button sendButton;
-
-    @FXML
     private TableView<Mail> table;
 
     @FXML
-    void refreshButtonClicked(ActionEvent event) throws MessagingException, IOException {
+    void refreshButtonClicked() throws MessagingException, IOException {
         labelStatus.setText("Aktualisiere...");
         SaveLoad saveLoad = new SaveLoad();
         Boolean checkIfContinue = saveLoad.download(username, outPutServer, email, password, outputPort);
-        if(checkIfContinue == false)
+        if(!checkIfContinue)
         {
             Stage stage = (Stage) refreshButton.getScene().getWindow();
             stage.close();
@@ -73,7 +65,7 @@ public class MainScreen {
 
 
     @FXML
-    void sendButtonClicked(ActionEvent event) throws IOException {
+    void sendButtonClicked() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SendMail.fxml"));
         Parent root2 = fxmlLoader.load();
         SendMail sendMail = fxmlLoader.getController();
@@ -150,8 +142,6 @@ public class MainScreen {
         list.removeAll();
         File folder = new File("C:\\mails\\" + username + "\\");
         File[] listOfFiles = folder.listFiles();
-        //only null if user never received emails
-        System.out.println(folder.toString());
         if (listOfFiles != null) {
             Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
             for (int i = 0; i < listOfFiles.length; i++) {
@@ -181,18 +171,10 @@ public class MainScreen {
         stage.show();
     }
 
-//    public void refresh() throws MessagingException, IOException {
-//        SaveLoad saveLoad = new SaveLoad();
-//        saveLoad.download(username, outPutServer, email, password, outputPort);
-//        loadData();
-//    }
-
     public void setUserData(String username, String email, String password, String inputServer, Integer inputPort, String outPutServer, Integer outputPort) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.inputPort = inputPort;
-        this.inputServer = inputServer;
         this.outputPort = outputPort;
         this.outPutServer = outPutServer;
     }
