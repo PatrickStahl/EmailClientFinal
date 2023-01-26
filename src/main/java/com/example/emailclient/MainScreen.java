@@ -3,20 +3,20 @@ package com.example.emailclient;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
 
 import static java.lang.Math.abs;
 
@@ -76,7 +76,7 @@ public class MainScreen {
         stage.show();
     }
 
-    public void initialize() {
+    public void initialize() throws MessagingException, IOException {
         table.getColumns().clear();
         table.setItems(list);
         initiateCols();
@@ -90,7 +90,7 @@ public class MainScreen {
         }
     }
 
-    private void initiateCols() {
+    private void initiateCols() throws MessagingException, IOException {
         SaveLoad saveLoad = new SaveLoad();
         columnSubject.setCellValueFactory(new PropertyValueFactory<Mail, String>("subject"));
         columnFrom.setCellValueFactory(new PropertyValueFactory<Mail, String>("from"));
@@ -103,16 +103,29 @@ public class MainScreen {
                 @Override
                 protected void updateItem(String item, boolean empty) {
                     super.updateItem(item, empty);
-                    setText(empty ? null : item);
+                    if (!empty) {
+                        Mail mail = getTableView().getItems().get(getIndex());
+                        String seenHeader = mail.getSeenHeader();
+                        if (seenHeader != null)
+                        {
+                            setTextFill(Color.GREY);
+                            table.refresh();
+                        }
+                        else
+                        {
+                            setTextFill(Color.BLACK);
+                        }
+                        setText(item);
+                    }
                 }
             };
-
 
             cell.setOnMouseClicked(e ->
             {
                 System.out.println(table.getSelectionModel().getSelectedIndex());
                 Integer index = cell.getIndex();
                 File folder = new File("C:\\mails\\" + username + "\\");
+                //Nullpointerexception never happens because list is initialized first and error is thrown if user has no emails
                 index = abs((index - folder.listFiles().length));
                 String name = "mail" + index;
 
@@ -122,6 +135,7 @@ public class MainScreen {
                     {
                         loadMail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.loadBody(username, name));
                         saveLoad.addHeader("C:\\mails\\" + username + "\\" + name + ".eml", "1", saveLoad.getSentDate(username, name));
+                        loadData();
                     }
                     catch (IOException | MessagingException ex)
                     {
@@ -136,6 +150,8 @@ public class MainScreen {
         table.getColumns().addAll(columnSubject, columnFrom, columnTo, columnDate);
     }
 
+
+
     //loads from PC
     private void loadData() throws MessagingException, IOException {
         list.clear();
@@ -143,13 +159,13 @@ public class MainScreen {
         File folder = new File("C:\\mails\\" + username + "\\");
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {
-            Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
+            Arrays.sort(listOfFiles, Collections.reverseOrder());
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
                     SaveLoad saveLoad = new SaveLoad();
                     String name = listOfFiles[i].getName();
                     name = name.substring(0, name.length() - 4);
-                    Mail currentMail = new Mail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.getDate(username, name));
+                    Mail currentMail = new Mail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.getDate(username, name), saveLoad.getHeaderValue(username, name));
                     list.add(currentMail);
                 }
             }
@@ -161,9 +177,8 @@ public class MainScreen {
     }
 
     public void loadMail(String subject, String from, String to, String body) throws IOException {
-        SaveLoad safeLoad = new SaveLoad();
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("OpenMail.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = fxmlLoader.load();
         OpenMail openMail = fxmlLoader.getController();
         openMail.loadStuff(subject, from, to, body);
         Stage stage = new Stage();
@@ -186,11 +201,14 @@ public class MainScreen {
         private final SimpleStringProperty to;
         private final SimpleStringProperty date;
 
-        public Mail(String subject, String from, String to, String date) {
+        private final SimpleStringProperty seenHeader;
+
+        public Mail(String subject, String from, String to, String date, String seenHeader) {
             this.subject = new SimpleStringProperty(subject);
             this.from = new SimpleStringProperty(from);
             this.to = new SimpleStringProperty(to);
             this.date = new SimpleStringProperty(date);
+            this.seenHeader = new SimpleStringProperty(seenHeader);
         }
 
         public String getSubject() {
@@ -239,6 +257,16 @@ public class MainScreen {
 
         public void setDate(String date) {
             this.date.set(date);
+        }
+
+        public String getSeenHeader()
+        {
+            return seenHeader.get();
+        }
+
+        public void setSeenHeader(String seenHeader)
+        {
+            this.seenHeader.set(seenHeader);
         }
     }
 

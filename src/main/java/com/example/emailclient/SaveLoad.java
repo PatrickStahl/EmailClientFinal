@@ -16,12 +16,11 @@ import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileTime;
+import java.text.DateFormat;
 import java.util.*;
 
 
@@ -38,12 +37,13 @@ public class SaveLoad
         properties.setProperty("mail.pop3.port", port.toString());
         if(port.equals(995))
         {
+            ssl = true;
             properties.setProperty("mail.pop3.ssl.enable", "true");
         }
 
         Session session = Session.getInstance(properties);
-        POP3SSLStore sslStore = null;
-        POP3Store store = null;
+        POP3SSLStore sslStore;
+        POP3Store store;
 
         Folder inbox;
         if (ssl)
@@ -64,25 +64,22 @@ public class SaveLoad
                 showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
                 return false;
             }
-            //TODO hier falsches Passwort fehlermeldung machen
             inbox = store.getFolder("INBOX");
         }
 
         inbox.open(Folder.READ_ONLY);
         Message[] messages = inbox.getMessages();
-        System.out.println("Anzahl im Postfach: " + messages.length);
-        System.out.println("Anzahl im Ordner: " + folder.listFiles().length);
+
         for (int i = folder.listFiles().length; i< messages.length; i++)
         {
             try
             {
-                messages[i].writeTo(new FileOutputStream(new File("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml")));
+                messages[i].writeTo(new FileOutputStream("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml"));
                 setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
             }
             catch (IOException e)
             {
-                System.out.print("could not save mail" + messages[i].getSubject());
-                e.printStackTrace();
+
             }
         }
         return true;
@@ -163,7 +160,7 @@ public class SaveLoad
                 return text;
             }
         }
-        // if the mail is not splitted into parts
+
         else
         {
             String contentType = message.getContentType();
@@ -231,7 +228,7 @@ public class SaveLoad
                         }
                         catch (UnsupportedEncodingException e)
                         {
-                            System.out.println("\u001B[31mUnsupported encoding: " + charset + "\u001B[0m");
+
                         }
                     }
                     else if (encoding.equals("b"))
@@ -243,7 +240,7 @@ public class SaveLoad
                         }
                         catch (UnsupportedEncodingException e)
                         {
-                            System.out.println("\u001B[31mUnsupported encoding: " + charset + "\u001B[0m");
+
                         }
                     }
                 }
@@ -337,29 +334,8 @@ public class SaveLoad
             String date = message.getSentDate().toString();
             String[] dateParts = date.split(" ");
 
-
-            dateParts[0] = dateParts[0].replace("Mon", "Montag, ");
-            dateParts[0] = dateParts[0].replace("Thu", "Dienstag, ");
-            dateParts[0] = dateParts[0].replace("Wed", "Mittwoch, ");
-            dateParts[0] = dateParts[0].replace("Tue", "Donnerstag, ");
-            dateParts[0] = dateParts[0].replace("Fri", "Freitag, ");
-            dateParts[0] = dateParts[0].replace("Sat", "Samstag, ");
-            dateParts[0] = dateParts[0].replace("Sun", "Sonntag, ");
-
-            dateParts[1] = dateParts[1].replace("Jan", "01");
-            dateParts[1] = dateParts[1].replace("Feb", "02");
-            dateParts[1] = dateParts[1].replace("Mar", "03");
-            dateParts[1] = dateParts[1].replace("Apr", "04");
-            dateParts[1] = dateParts[1].replace("Mai", "05");
-            dateParts[1] = dateParts[1].replace("Jun", "06");
-            dateParts[1] = dateParts[1].replace("Jul", "07");
-            dateParts[1] = dateParts[1].replace("Aug", "08");
-            dateParts[1] = dateParts[1].replace("Sep", "09");
-            dateParts[1] = dateParts[1].replace("Oct", "10");
-            dateParts[1] = dateParts[1].replace("Nov", "11");
-            dateParts[1] = dateParts[1].replace("Dec", "12");
-
-            return dateParts[0] + dateParts[2] + "." + dateParts[1] + "." + dateParts[5] + " " + dateParts[3];
+            DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.GERMANY);
+            return formatter.format(message.getSentDate());
         }
         else
         {
@@ -378,8 +354,8 @@ public class SaveLoad
         return message.getSentDate();
     }
 
-    public String getHeaderValue(String name) throws FileNotFoundException, MessagingException {
-        String path = "C:\\mails\\" + name + ".eml";
+    public String getHeaderValue(String directory, String name) throws FileNotFoundException, MessagingException {
+        String path = "C:\\mails\\" +directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
