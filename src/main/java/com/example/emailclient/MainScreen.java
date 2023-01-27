@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 import static java.lang.Math.abs;
 
@@ -76,7 +77,8 @@ public class MainScreen {
         stage.show();
     }
 
-    public void initialize() throws MessagingException, IOException {
+    public void initialize() throws MessagingException
+    {
         table.getColumns().clear();
         table.setItems(list);
         initiateCols();
@@ -90,7 +92,7 @@ public class MainScreen {
         }
     }
 
-    private void initiateCols() throws MessagingException, IOException {
+    private void initiateCols() throws MessagingException {
         SaveLoad saveLoad = new SaveLoad();
         columnSubject.setCellValueFactory(new PropertyValueFactory<Mail, String>("subject"));
         columnFrom.setCellValueFactory(new PropertyValueFactory<Mail, String>("from"));
@@ -159,7 +161,7 @@ public class MainScreen {
         File folder = new File("C:\\mails\\" + username + "\\");
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {
-            Arrays.sort(listOfFiles, Collections.reverseOrder());
+            Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
                     SaveLoad saveLoad = new SaveLoad();

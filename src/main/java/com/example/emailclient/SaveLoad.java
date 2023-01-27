@@ -70,7 +70,7 @@ public class SaveLoad
         inbox.open(Folder.READ_ONLY);
         Message[] messages = inbox.getMessages();
 
-        for (int i = folder.listFiles().length; i< messages.length; i++)
+        for (int i = folder.listFiles().length; i< 5; i++)
         {
             try
             {
@@ -88,16 +88,18 @@ public class SaveLoad
 
     private void setFileCreationDate(String filePath, Date creationDate) throws IOException
     {
-
         BasicFileAttributeView attributes = Files.getFileAttributeView(Paths.get(filePath), BasicFileAttributeView.class);
         FileTime time = FileTime.fromMillis(creationDate.getTime());
         attributes.setTimes(time, time, time);
+        File file = new File(filePath);
+        file.setWritable(false);
     }
 
 
     public void addHeader(String filePath, String headerValue, Date creationDate) throws IOException, MessagingException
     {
         File emlFile = new File(filePath);
+        emlFile.setWritable(true);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
         InputStream source = new FileInputStream(emlFile);
@@ -111,6 +113,7 @@ public class SaveLoad
         BasicFileAttributeView attributes = Files.getFileAttributeView(Paths.get(filePath), BasicFileAttributeView.class);
         FileTime time = FileTime.fromMillis(creationDate.getTime());
         attributes.setTimes(time, time, time);
+        emlFile.setWritable(false);
     }
 
     public String loadBody(String directory, String subject) throws MessagingException, IOException
