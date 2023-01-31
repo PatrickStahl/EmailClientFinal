@@ -40,7 +40,7 @@ public class ReadWrite
         return dataParts[1];
     }
 
-    public String readInputAdress(String filePath) throws IOException
+    public String readInputAddress(String filePath) throws IOException
     {
         BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
         String data = br.readLine();
@@ -60,7 +60,7 @@ public class ReadWrite
         return dataParts[3];
     }
 
-    public String readOutputAdress(String filePath) throws IOException
+    public String readOutputAddress(String filePath) throws IOException
     {
         BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
         String data = br.readLine();

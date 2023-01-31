@@ -16,7 +16,6 @@ import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 import static java.lang.Math.abs;
@@ -55,7 +54,7 @@ public class MainScreen {
     void refreshButtonClicked() throws MessagingException, IOException {
         labelStatus.setText("Aktualisiere...");
         SaveLoad saveLoad = new SaveLoad();
-        Boolean checkIfContinue = saveLoad.download(username, outPutServer, email, password, outputPort);
+        boolean checkIfContinue = saveLoad.download(username, outPutServer, email, password, outputPort);
         if(!checkIfContinue)
         {
             Stage stage = (Stage) refreshButton.getScene().getWindow();
@@ -77,8 +76,7 @@ public class MainScreen {
         stage.show();
     }
 
-    public void initialize() throws MessagingException
-    {
+    public void initialize() {
         table.getColumns().clear();
         table.setItems(list);
         initiateCols();
@@ -92,7 +90,7 @@ public class MainScreen {
         }
     }
 
-    private void initiateCols() throws MessagingException {
+    private void initiateCols() {
         SaveLoad saveLoad = new SaveLoad();
         columnSubject.setCellValueFactory(new PropertyValueFactory<Mail, String>("subject"));
         columnFrom.setCellValueFactory(new PropertyValueFactory<Mail, String>("from"));
@@ -125,9 +123,9 @@ public class MainScreen {
             cell.setOnMouseClicked(e ->
             {
                 System.out.println(table.getSelectionModel().getSelectedIndex());
-                Integer index = cell.getIndex();
+                int index = cell.getIndex();
                 File folder = new File("C:\\mails\\" + username + "\\");
-                //Nullpointerexception never happens because list is initialized first and error is thrown if user has no emails
+                //NullpointerException never happens because list is initialized first and error is thrown if user has no emails
                 index = abs((index - folder.listFiles().length));
                 String name = "mail" + index;
 

@@ -131,9 +131,9 @@ public class LoginScreen {
         ReadWrite write = new ReadWrite();
         username.setText(write.readUsername(usernameData));
         password.setText(write.readPassword(usernameData));
-        inputServer.setText(write.readInputAdress(usernameData));
+        inputServer.setText(write.readInputAddress(usernameData));
         inputPort.setText(write.readInputPort(usernameData));
-        outputServer.setText(write.readOutputAdress(usernameData));
+        outputServer.setText(write.readOutputAddress(usernameData));
         outputPort.setText(write.readOutputPort(usernameData));
         chooseServer.setValue(write.readServer(usernameData));
         email.setText(write.readEmail(usernameData));

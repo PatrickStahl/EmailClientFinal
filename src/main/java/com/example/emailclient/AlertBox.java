@@ -15,7 +15,7 @@ public class AlertBox {
     private Button okButton;
 
     @FXML
-    void okButtonClicked(ActionEvent event)
+    void okButtonClicked()
     {
         Stage stage = (Stage) okButton.getScene().getWindow();
         stage.close();

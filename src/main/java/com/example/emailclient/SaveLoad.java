@@ -30,7 +30,7 @@ public class SaveLoad
 
         File folder = new File("C:\\mails\\" + username);
 
-        Boolean ssl = false;
+        boolean ssl = false;
         java.util.Properties properties = new java.util.Properties();
 
         properties.setProperty("mail.pop3.host", host);
@@ -70,14 +70,15 @@ public class SaveLoad
         inbox.open(Folder.READ_ONLY);
         Message[] messages = inbox.getMessages();
 
-        for (int i = folder.listFiles().length; i< 5; i++)
+        //Nullpointerexception never happens because directory is created beforehand every time
+        for (int i = folder.listFiles().length; i< messages.length; i++)
         {
             try
             {
                 messages[i].writeTo(new FileOutputStream("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml"));
                 setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
             }
-            catch (IOException e)
+            catch (IOException ignored)
             {
 
             }
@@ -108,7 +109,7 @@ public class SaveLoad
         message.addHeader("X-Seen", headerValue);
         message.saveChanges();
 
-        message.writeTo(new FileOutputStream(new File(filePath)));
+        message.writeTo(new FileOutputStream(filePath));
 
         BasicFileAttributeView attributes = Files.getFileAttributeView(Paths.get(filePath), BasicFileAttributeView.class);
         FileTime time = FileTime.fromMillis(creationDate.getTime());
@@ -148,7 +149,7 @@ public class SaveLoad
                 }
                 else
                 {
-                    // if it is MultiPart/Alternative, print the first bodypart
+                    // if it is MultiPart/Alternative, print the first body-part
                     if (contentType.contains("multipart/alternative"))
                     {
                         MimeMultipart mimeMultipartAlternative = (MimeMultipart) bodyPart.getContent();
@@ -229,7 +230,7 @@ public class SaveLoad
                         {
                             deciphered.append(URLDecoder.decode(encodedText, charset));
                         }
-                        catch (UnsupportedEncodingException e)
+                        catch (UnsupportedEncodingException ignored)
                         {
 
                         }
@@ -241,7 +242,7 @@ public class SaveLoad
                         {
                             deciphered.append(new String(bytes, charset));
                         }
-                        catch (UnsupportedEncodingException e)
+                        catch (UnsupportedEncodingException ignored)
                         {
 
                         }
@@ -335,7 +336,6 @@ public class SaveLoad
         if(message.getSentDate() != null)
         {
             String date = message.getSentDate().toString();
-            String[] dateParts = date.split(" ");
 
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.GERMANY);
             return formatter.format(message.getSentDate());

@@ -74,7 +74,7 @@ public class SendMail {
     }
 
     @FXML
-    void addButtonClicked(ActionEvent event)
+    void addButtonClicked()
     {
         CC += textFieldCC.getText() + ",";
         labelStatus.setText("Receiver " + textFieldCC.getText() + " added");
@@ -83,14 +83,14 @@ public class SendMail {
     }
 
     @FXML
-    void cancelButtonClicked(ActionEvent event)
+    void cancelButtonClicked()
     {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
 
     @FXML
-    void sendButtonClicked(ActionEvent event) throws IOException {
+    void sendButtonClicked() throws IOException {
         if(textFieldFrom.getText().isEmpty() || textFieldTo.getText().isEmpty() || textFieldSubject.getText().isEmpty() || textFieldBody.getText().isEmpty())
         {
             showError("Fehler", "Füllen Sie alle Felder aus!");
@@ -114,10 +114,10 @@ public class SendMail {
 
     private void send(String from, String to, String CC, String subject, String body) throws IOException, MessagingException {
         ReadWrite readWrite = new ReadWrite();
-        String host = readWrite.readInputAdress(username);
+        String host = readWrite.readInputAddress(username);
         String port = readWrite.readInputPort(username);
         String password = readWrite.readPassword(username);
-        Boolean ssl = false;
+        boolean ssl = false;
         if(port.equals("465"))
         {
             ssl = true;
@@ -127,7 +127,7 @@ public class SendMail {
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.host", host);
 
-        if(ssl == true)
+        if(ssl)
         {
             prop.put("mali.smtp.ssl.enable", "true");
             prop.put("mail.smtp.ssl.trust", host);
@@ -156,7 +156,7 @@ public class SendMail {
         }
         message.setSubject(subject);
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(body.toString(), "text/html; charset=utf-8");
+        mimeBodyPart.setContent(body, "text/html; charset=utf-8");
 
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);

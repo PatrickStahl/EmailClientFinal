@@ -1,6 +1,5 @@
 package com.example.emailclient;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,7 +31,7 @@ public class ChooseData {
     {
         String[] userAccounts = ChooseData.userAccounts();
         for (int i = 0; i < userAccounts.length; i++) {
-            String account = userAccounts[i].toString();
+            String account = userAccounts[i];
             account = account.substring(0, account.length() - 4);
             chooseData.getItems().addAll(account);
         }
@@ -48,7 +47,7 @@ public class ChooseData {
     }
 
     @FXML
-    void loginButtonClicked(ActionEvent event)
+    void loginButtonClicked()
     {
         ReadWrite readWrite = new ReadWrite();
         try
@@ -73,7 +72,7 @@ public class ChooseData {
                     Stage window = (Stage) loginButton.getScene().getWindow();
                     window.close();
                 }
-                catch (Exception e)
+                catch (Exception ignored)
                 {
 
                 }
@@ -83,14 +82,14 @@ public class ChooseData {
                 showError("Fehler", "Falsches Passwort");
             }
         }
-        catch (IOException e1)
+        catch (IOException ignored)
         {
 
         }
 
     }
 
-    private static String[] userAccounts() throws IOException
+    private static String[] userAccounts()
     {
         File folder = new File("C:\\files");
         File[] listOfFiles = folder.listFiles();

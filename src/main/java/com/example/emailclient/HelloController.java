@@ -45,13 +45,13 @@ public class HelloController {
     }
 
     @FXML
-    void registerButtonClicked(ActionEvent event)
+    void registerButtonClicked()
     {
         try
         {
             File folder = new File("C:\\files");
             File[] listOfFiles = folder.listFiles();
-            if(listOfFiles.length == 0)
+            if(listOfFiles == null)
             {
                 showError("Fehler", "Keine Daten vorhanden");
             }
