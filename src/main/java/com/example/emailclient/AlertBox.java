@@ -19,8 +19,8 @@ public class AlertBox {
     {
         Stage stage = (Stage) okButton.getScene().getWindow();
         stage.close();
-
     }
+
 
     public void display(String label)
     {

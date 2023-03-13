@@ -67,6 +67,7 @@ public class ChooseData {
                     Stage stage = new Stage();
                     stage.setTitle("Login");
                     stage.setScene(new Scene(root1));
+                    stage.setResizable(false);
                     stage.show();
 
                     Stage window = (Stage) loginButton.getScene().getWindow();
@@ -115,6 +116,7 @@ public class ChooseData {
         Stage stage = new Stage();
         stage.setTitle(title);
         stage.setScene(new Scene(root1));
+        stage.setResizable(false);
         stage.show();
     }
 

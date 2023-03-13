@@ -64,7 +64,7 @@ public class MainScreen{
     void refreshButtonClicked() {
         loadingLabel.setVisible(true);
         loadingBar.setVisible(true);
-        labelStatus.setText("Aktualisiere...");
+        //labelStatus.setText("Aktualisiere...");
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -78,7 +78,7 @@ public class MainScreen{
             protected void done() {
                 loadingLabel.setVisible(false);
                 loadingBar.setVisible(false);
-                labelStatus.setText("");
+                //labelStatus.setText("");
                 try
                 {
                     get();

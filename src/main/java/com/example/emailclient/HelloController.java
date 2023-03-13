@@ -34,6 +34,7 @@ public class HelloController {
             Stage stage = new Stage();
             stage.setTitle("Login");
             stage.setScene(new Scene(root1));
+            stage.setResizable(false);
             stage.show();
         }
         catch (Exception e)
@@ -62,6 +63,7 @@ public class HelloController {
                 Stage stage = new Stage();
                 stage.setTitle("Wähle Daten");
                 stage.setScene(new Scene(root1));
+                stage.setResizable(false);
                 stage.show();
             }
         }
@@ -80,6 +82,7 @@ public class HelloController {
         Stage stage = new Stage();
         stage.setTitle(title);
         stage.setScene(new Scene(root1));
+        stage.setResizable(false);
         stage.show();
     }
 

@@ -87,6 +87,8 @@ public class LoginScreen {
     private void initialize()
     {
         File filesDir = new File("C:\\files");
+        File filesDirNew = new File("files");
+        filesDirNew.mkdirs();
         if(!filesDir.exists())
         {
             filesDir.mkdirs();
@@ -148,6 +150,7 @@ public class LoginScreen {
         Stage stage = new Stage();
         stage.setTitle(title);
         stage.setScene(new Scene(root1));
+        stage.setResizable(false);
         stage.show();
     }
 

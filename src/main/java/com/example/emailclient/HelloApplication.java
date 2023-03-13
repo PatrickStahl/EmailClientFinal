@@ -15,7 +15,9 @@ public class HelloApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 447, 122);
         stage.setTitle("Registrierung");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
+        System.out.println(System.getProperty("user.dir"));
     }
 
     public static void main(String[] args)
