@@ -13,14 +13,16 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.mail.MessagingException;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.concurrent.ExecutionException;
 
 import static java.lang.Math.abs;
 
-public class MainScreen {
+public class MainScreen{
 
 
     private String username;
@@ -51,16 +53,44 @@ public class MainScreen {
     private TableView<Mail> table;
 
     @FXML
-    void refreshButtonClicked() throws MessagingException, IOException {
+    private ProgressBar loadingBar;
+
+    @FXML
+    private Label loadingLabel;
+
+
+
+    @FXML
+    void refreshButtonClicked() {
+        loadingLabel.setVisible(true);
+        loadingBar.setVisible(true);
         labelStatus.setText("Aktualisiere...");
-        SaveLoad saveLoad = new SaveLoad();
-        boolean checkIfContinue = saveLoad.download(username, outPutServer, email, password, outputPort);
-        if(!checkIfContinue)
-        {
-            Stage stage = (Stage) refreshButton.getScene().getWindow();
-            stage.close();
-        }
-        loadData();
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                SaveLoad saveLoad = new SaveLoad();
+                saveLoad.setData(username, outPutServer, email, password, outputPort);
+                saveLoad.run();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                loadingLabel.setVisible(false);
+                loadingBar.setVisible(false);
+                labelStatus.setText("");
+                try
+                {
+                    get();
+                    loadData();
+                }
+                catch (InterruptedException | ExecutionException | MessagingException | IOException e)
+                {
+                    //exceptions handled elsewhere
+                }
+            }
+        };
+        worker.execute();
     }
 
 
@@ -79,6 +109,8 @@ public class MainScreen {
     public void initialize() {
         table.getColumns().clear();
         table.setItems(list);
+        loadingBar.setVisible(false);
+        loadingLabel.setVisible(false);
         initiateCols();
         try
         {
@@ -171,7 +203,6 @@ public class MainScreen {
             }
             table.setItems(list);
             table.refresh();
-            labelStatus.setText("");
         }
 
     }
@@ -193,6 +224,7 @@ public class MainScreen {
         this.outputPort = outputPort;
         this.outPutServer = outPutServer;
     }
+
 
 
     public static class Mail {
@@ -271,9 +303,11 @@ public class MainScreen {
     }
 
 
-    public void setDirectoryName(String name) {
+    public void setDirectoryName(String name)
+    {
         File directory = new File("C:\\mails\\" + name);
-        if (!directory.exists()) {
+        if (!directory.exists())
+        {
             directory.mkdirs();
         }
     }

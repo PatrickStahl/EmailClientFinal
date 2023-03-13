@@ -24,10 +24,35 @@ import java.text.DateFormat;
 import java.util.*;
 
 
-public class SaveLoad
+public class SaveLoad implements Runnable
 {
-    public boolean download(String username, String host, String email, String password, Integer port) throws MessagingException, IOException {
+    private String username;
+    private String host;
+    private String email;
+    private String password;
+    private Integer port;
 
+
+    public void run()
+    {
+        try
+        {
+            download(username, host, email, password, port);
+            System.out.println("Run completed");
+
+        }
+        catch (MessagingException e)
+        {
+            throw new RuntimeException(e);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void download(String username, String host, String email, String password, Integer port) throws MessagingException, IOException
+    {
         File folder = new File("C:\\mails\\" + username);
 
         boolean ssl = false;
@@ -42,8 +67,66 @@ public class SaveLoad
         }
 
         Session session = Session.getInstance(properties);
-        POP3SSLStore sslStore;
-        POP3Store store;
+        POP3SSLStore sslStore = null;
+        POP3Store store = null;
+
+        Folder inbox;
+        if (ssl)
+        {
+            sslStore = new POP3SSLStore(session, null);
+            sslStore.connect(host, port, email, password);
+            inbox = sslStore.getFolder("INBOX");
+        }
+        else
+        {
+            store = new POP3Store(session, null);
+            try
+            {
+                store.connect(host, port, email, password);
+            }
+            catch(MessagingException m)
+            {
+                showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
+            }
+            inbox = store.getFolder("INBOX");
+        }
+
+        inbox.open(Folder.READ_ONLY);
+        Message[] messages = inbox.getMessages();
+
+        //Nullpointerexception never happens because directory is created beforehand every time
+        for (int i = folder.listFiles().length; i< 20; i++)
+        {
+            try
+            {
+                messages[i].writeTo(new FileOutputStream("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml"));
+                setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
+            }
+            catch (IOException ignored)
+            {
+
+            }
+        }
+    }
+
+    public boolean checkData(String username, String host, String email, String password, Integer port) throws MessagingException, IOException
+    {
+        File folder = new File("C:\\mails\\" + username);
+
+        boolean ssl = false;
+        java.util.Properties properties = new java.util.Properties();
+
+        properties.setProperty("mail.pop3.host", host);
+        properties.setProperty("mail.pop3.port", port.toString());
+        if(port.equals(995))
+        {
+            ssl = true;
+            properties.setProperty("mail.pop3.ssl.enable", "true");
+        }
+
+        Session session = Session.getInstance(properties);
+        POP3SSLStore sslStore = null;
+        POP3Store store = null;
 
         Folder inbox;
         if (ssl)
@@ -64,28 +147,9 @@ public class SaveLoad
                 showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
                 return false;
             }
-            inbox = store.getFolder("INBOX");
-        }
-
-        inbox.open(Folder.READ_ONLY);
-        Message[] messages = inbox.getMessages();
-
-        //Nullpointerexception never happens because directory is created beforehand every time
-        for (int i = folder.listFiles().length; i< messages.length; i++)
-        {
-            try
-            {
-                messages[i].writeTo(new FileOutputStream("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml"));
-                setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
-            }
-            catch (IOException ignored)
-            {
-
-            }
         }
         return true;
     }
-
 
     private void setFileCreationDate(String filePath, Date creationDate) throws IOException
     {
@@ -380,4 +444,12 @@ public class SaveLoad
         stage.show();
     }
 
+    public void setData(String username, String host, String email, String password, Integer port)
+    {
+        this.username = username;
+        this.host = host;
+        this.email = email;
+        this.password = password;
+        this.port = port;
+    }
 }

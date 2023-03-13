@@ -4,6 +4,7 @@ module com.example.emailclient {
     requires mail;
     requires org.jsoup;
     //requires jfxrt;
+    requires java.desktop;
 
 
     opens com.example.emailclient to javafx.fxml;
