@@ -30,7 +30,7 @@ public class HelloController {
         try
         {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginScreen.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
+            Parent root1 = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Login");
             stage.setScene(new Scene(root1));
@@ -61,7 +61,7 @@ public class HelloController {
             else
             {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChooseData.fxml"));
-                Parent root1 = (Parent) fxmlLoader.load();
+                Parent root1 = fxmlLoader.load();
                 Stage stage = new Stage();
                 stage.setTitle("Wähle Daten");
                 stage.setScene(new Scene(root1));
@@ -80,7 +80,7 @@ public class HelloController {
     private void showError(String title, String message) throws IOException
     {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = fxmlLoader.load();
         AlertBox alertBox = fxmlLoader.getController();
         alertBox.display(message);
         Stage stage = new Stage();

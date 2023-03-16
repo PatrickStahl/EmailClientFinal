@@ -23,7 +23,7 @@ public class HelloApplication extends Application
     public void load() throws IOException
     {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = fxmlLoader.load();
         Stage stage = new Stage();
         stage.setTitle("Registrierung");
         stage.setScene(new Scene(root1));

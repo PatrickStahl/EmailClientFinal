@@ -13,7 +13,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 
@@ -52,7 +51,7 @@ public class LoginScreen {
 
 
     @FXML
-    void confirmButtonClicked(ActionEvent event) throws IOException, MessagingException {
+    void confirmButtonClicked(ActionEvent event) throws IOException {
         if(username.getText().isEmpty() || password.getText().isEmpty() || inputServer.getText().isEmpty() || inputPort.getText().isEmpty() || outputPort.getText().isEmpty() || outputServer.getText().isEmpty() || email.getText().isEmpty())
         {
             showError("Fehler", "Füllen Sie alle Felder aus!");
@@ -154,7 +153,7 @@ public class LoginScreen {
     private void showError(String title, String message) throws IOException
     {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = fxmlLoader.load();
         AlertBox alertBox = fxmlLoader.getController();
         alertBox.display(message);
         Stage stage = new Stage();

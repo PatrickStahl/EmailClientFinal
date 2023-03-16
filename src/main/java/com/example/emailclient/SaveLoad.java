@@ -2,11 +2,6 @@ package com.example.emailclient;
 
 import com.sun.mail.pop3.POP3SSLStore;
 import com.sun.mail.pop3.POP3Store;
-
-import javax.mail.*;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,6 +9,9 @@ import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.file.Files;
@@ -21,8 +19,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
-import java.util.*;
-import java.util.concurrent.TimeoutException;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Properties;
 
 
 public class SaveLoad implements Runnable
@@ -41,11 +41,7 @@ public class SaveLoad implements Runnable
             download(username, host, email, password, port);
 
         }
-        catch (MessagingException e)
-        {
-            throw new RuntimeException(e);
-        }
-        catch (IOException e)
+        catch (MessagingException | IOException e)
         {
             throw new RuntimeException(e);
         }
@@ -67,8 +63,8 @@ public class SaveLoad implements Runnable
         }
 
         Session session = Session.getInstance(properties);
-        POP3SSLStore sslStore = null;
-        POP3Store store = null;
+        POP3SSLStore sslStore;
+        POP3Store store;
 
         Folder inbox;
         if (ssl)
@@ -116,47 +112,6 @@ public class SaveLoad implements Runnable
         }
     }
 
-    public boolean checkData(String username, String host, String email, String password, Integer port) throws MessagingException, IOException
-    {
-        File folder = new File(Global.mails + username);
-
-        boolean ssl = false;
-        java.util.Properties properties = new java.util.Properties();
-
-        properties.setProperty("mail.pop3.host", host);
-        properties.setProperty("mail.pop3.port", port.toString());
-        if(port.equals(995))
-        {
-            ssl = true;
-            properties.setProperty("mail.pop3.ssl.enable", "true");
-        }
-
-        Session session = Session.getInstance(properties);
-        POP3SSLStore sslStore = null;
-        POP3Store store = null;
-
-        Folder inbox;
-        if (ssl)
-        {
-            sslStore = new POP3SSLStore(session, null);
-            sslStore.connect(host, port, email, password);
-            inbox = sslStore.getFolder("INBOX");
-        }
-        else
-        {
-            store = new POP3Store(session, null);
-            try
-            {
-                store.connect(host, port, email, password);
-            }
-            catch(MessagingException m)
-            {
-                showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
-                return false;
-            }
-        }
-        return true;
-    }
 
     private void setFileCreationDate(String filePath, Date creationDate) throws IOException
     {
@@ -412,8 +367,6 @@ public class SaveLoad implements Runnable
 
         if(message.getSentDate() != null)
         {
-            String date = message.getSentDate().toString();
-
             DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.GERMANY);
             return formatter.format(message.getSentDate());
         }
@@ -445,19 +398,6 @@ public class SaveLoad implements Runnable
         source.close();
 
         return message.getHeader("X-Seen", null );
-    }
-
-    private void showError(String title, String message) throws IOException
-    {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AlertBox.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
-        AlertBox alertBox = fxmlLoader.getController();
-        alertBox.display(message);
-        Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.setScene(new Scene(root1));
-        stage.setResizable(false);
-        stage.show();
     }
 
     public void setData(String username, String host, String email, String password, Integer port)

@@ -8,15 +8,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.mail.MessagingException;
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
@@ -78,7 +84,8 @@ public class MainScreen{
         loadingBar.setVisible(true);
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground()
+            {
                 SaveLoad saveLoad = new SaveLoad();
                 saveLoad.setData(username, outPutServer, email, password, outputPort);
                 saveLoad.run();
@@ -129,7 +136,7 @@ public class MainScreen{
                     FileInputStream fis = new FileInputStream(file);
                     fis.close();
                 }
-                catch (IOException e)
+                catch (IOException ignored)
                 {
 
                 }
@@ -187,6 +194,16 @@ public class MainScreen{
 
         creditButton.setOnAction(e ->
         {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                try
+                {
+                    Desktop.getDesktop().browse(new URI("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
+                }
+                catch (IOException | URISyntaxException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
             System.out.println("Credits wuhu");
         });
 
@@ -195,7 +212,7 @@ public class MainScreen{
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProblemScreen.fxml"));
             try
             {
-                Parent root1 = (Parent) fxmlLoader.load();
+                Parent root1 = fxmlLoader.load();
                 Stage stage = new Stage();
                 stage.setTitle("Hilfe");
                 stage.setScene(new Scene(root1));
@@ -272,7 +289,6 @@ public class MainScreen{
                     }
                 }
             });
-
             return cell;
         });
 

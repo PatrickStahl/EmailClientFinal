@@ -27,8 +27,7 @@ public class ChooseData {
     private ChoiceBox<String> chooseData;
 
     @FXML
-    private void initialize() throws IOException
-    {
+    private void initialize() {
         String[] userAccounts = ChooseData.userAccounts();
         for (int i = 0; i < userAccounts.length; i++) {
             String account = userAccounts[i];
@@ -61,7 +60,7 @@ public class ChooseData {
                 try
                 {
                     FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginScreen.fxml"));
-                    Parent root1 = (Parent) fxmlLoader.load();
+                    Parent root1 = fxmlLoader.load();
 
                     LoginScreen loginScreen = fxmlLoader.getController();
                     loginScreen.showUserData(username);
@@ -112,7 +111,7 @@ public class ChooseData {
     private static void showError(String title, String message) throws IOException
     {
         FXMLLoader fxmlLoader = new FXMLLoader(ChooseData.class.getResource("AlertBox.fxml"));
-        Parent root1 = (Parent) fxmlLoader.load();
+        Parent root1 = fxmlLoader.load();
         AlertBox alertBox = fxmlLoader.getController();
         alertBox.display(message);
         Stage stage = new Stage();
