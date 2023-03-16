@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <Label text="Häufige Probleme:" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="System Italic" size="30.0" />
+         </font>
+      </Label>
+   </top>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane prefHeight="355.0" prefWidth="600.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="440.0" prefWidth="569.0">
+                     <children>
+                        <Label layoutX="9.0" layoutY="4.0" text="Probleme mit Verbindung zum Server:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextArea editable="false" layoutX="9.0" layoutY="24.0" prefHeight="84.0" prefWidth="551.0" text="Der Client ist nur auf die Server der Friedrich-Schiller-Universität Jena ausgelegt,&#10;weshalb auch (stand 2023) die vorgegebenen Ein-und Ausgabeserver benutzt werden &#10;sollten. Eine Verbindung mit anderen Servern (z.B. Gmail) könnte aufgrund der erhöhten &#10;Sicherheit durch beispielsweise Zwei-Faktor-Authentifizierung nicht funktionieren. " />
+                        <Label layoutX="9.0" layoutY="112.0" text="Probleme beim Abrufen der Emails:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextArea editable="false" layoutX="9.0" layoutY="132.0" prefHeight="129.0" prefWidth="551.0" text="Falls nach dem Klicken des Aktualisieren-Buttons keine Mails geladen werden, kann das zwei &#10;mögliche Ursachen haben:&#10;- Sie haben noch keine Emails erhalten (einfach prüfbar, indem man sich über einen anderen &#10;  Service mit dem Emailserver verbindet)&#10;- Ihre Nutzerdaten sind falsch. Das ist erkennbar, an einer Fehlermeldung, die in der Terminalzeile&#10;  angegeben wird. In diesem Fall loggen Sie sich erneut ein und prüfen Sie die Richtigkeit Ihrer &#10;  Daten." />
+                        <Label layoutX="9.0" layoutY="271.0" text="Klick auf Mail liefert falschen Inhalt:">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextArea editable="false" layoutX="9.0" layoutY="291.0" prefHeight="129.0" prefWidth="551.0" text="Die Emails werden chronologisch vom Server geladen und sortiert nach Datum gespeichert. Diese&#10;Reihenfolge wird bei normaler Ausführung immer eingehalten, weshalb keine Probleme entstehen &#10;sollten. Falls ungewöhnliche Umstände auftreten, wie z.B. Internetausfälle, kann die Reihenfolge der &#10;Mails verändert werden, was die richtige Ausführung des Programms gefährdet. Sollte dieses &#10;Problem auftreten, drücken Sie unter &quot;Einstellungen&quot;  den Reiter &quot;Alle Emails löschen&quot;. Dadurch &#10;müssen Sie die Mails nochmals vom Server laden, das Problem der falschen Reihenfolge sollte durch &#10;diesen Vorgang aber behoben werden." />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

@@ -37,6 +37,8 @@ public class ChooseData {
         }
         String firstAcc = userAccounts[0];
         chooseData.setValue(firstAcc.substring(0, firstAcc.length() - 4));
+        //TODO das hier wegmachen
+        passwordTextField.setText("UAY!nJQjNPT8Ur9xs6S7");
     }
 
     @FXML
@@ -92,7 +94,7 @@ public class ChooseData {
 
     private static String[] userAccounts()
     {
-        File folder = new File("C:\\files");
+        File folder = new File(Global.files);
         File[] listOfFiles = folder.listFiles();
 
         String[] nameOfFiles = new String[listOfFiles.length];

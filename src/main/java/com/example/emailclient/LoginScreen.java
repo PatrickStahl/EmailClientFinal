@@ -75,6 +75,18 @@ public class LoginScreen {
             mainScreen.initialize();
             Stage stage = new Stage();
             stage.setScene(new Scene(root2));
+            stage.setOnCloseRequest(e->
+            {
+                HelloApplication helloApplication = new HelloApplication();
+                try
+                {
+                    helloApplication.load();
+                }
+                catch (IOException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            });
             stage.show();
 
             Stage window = (Stage) confirmButton.getScene().getWindow();
@@ -86,14 +98,12 @@ public class LoginScreen {
     @FXML
     private void initialize()
     {
-        File filesDir = new File("C:\\files");
-        File filesDirNew = new File("files");
-        filesDirNew.mkdirs();
+        File filesDir = new File(Global.files);
         if(!filesDir.exists())
         {
             filesDir.mkdirs();
         }
-        File mailsDir = new File("C:\\mails");
+        File mailsDir = new File(Global.mails);
         if(!mailsDir.exists())
         {
             mailsDir.mkdirs();

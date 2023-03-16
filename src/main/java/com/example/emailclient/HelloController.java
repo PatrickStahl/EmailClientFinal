@@ -36,6 +36,8 @@ public class HelloController {
             stage.setScene(new Scene(root1));
             stage.setResizable(false);
             stage.show();
+            Stage window = (Stage) loginButton.getScene().getWindow();
+            window.close();
         }
         catch (Exception e)
         {
@@ -50,7 +52,7 @@ public class HelloController {
     {
         try
         {
-            File folder = new File("C:\\files");
+            File folder = new File(Global.files);
             File[] listOfFiles = folder.listFiles();
             if(listOfFiles == null)
             {
@@ -65,6 +67,8 @@ public class HelloController {
                 stage.setScene(new Scene(root1));
                 stage.setResizable(false);
                 stage.show();
+                Stage window = (Stage) registerButton.getScene().getWindow();
+                window.close();
             }
         }
         catch (Exception e)

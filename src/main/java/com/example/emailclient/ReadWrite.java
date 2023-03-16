@@ -1,6 +1,7 @@
 package com.example.emailclient;
 import java.io.*;
 
+
 public class ReadWrite
 {
     public void write(String data)
@@ -9,7 +10,7 @@ public class ReadWrite
         String username = dataParts[0];
         try
         {
-            BufferedWriter bw = new BufferedWriter(new FileWriter("C:\\files\\" +  username + ".txt"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(Global.files +  username + ".txt"));
             bw.write(data);
             bw.close();
         }
@@ -22,7 +23,7 @@ public class ReadWrite
     //filepath = username
     public String readUsername(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -32,7 +33,7 @@ public class ReadWrite
 
     public String readPassword(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -42,7 +43,7 @@ public class ReadWrite
 
     public String readInputAddress(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -52,7 +53,7 @@ public class ReadWrite
 
     public String readInputPort(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -62,7 +63,7 @@ public class ReadWrite
 
     public String readOutputAddress(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -72,7 +73,7 @@ public class ReadWrite
 
     public String readOutputPort(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -82,7 +83,7 @@ public class ReadWrite
 
     public String readServer(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");
@@ -92,7 +93,7 @@ public class ReadWrite
 
     public String readEmail(String filePath) throws IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("C:\\files\\" + filePath + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(Global.files + filePath + ".txt"));
         String data = br.readLine();
         br.close();
         String[] dataParts = data.split("\\,");

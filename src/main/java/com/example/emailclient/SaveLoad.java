@@ -22,6 +22,7 @@ import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileTime;
 import java.text.DateFormat;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 
 public class SaveLoad implements Runnable
@@ -38,7 +39,6 @@ public class SaveLoad implements Runnable
         try
         {
             download(username, host, email, password, port);
-            System.out.println("Run completed");
 
         }
         catch (MessagingException e)
@@ -53,7 +53,7 @@ public class SaveLoad implements Runnable
 
     public void download(String username, String host, String email, String password, Integer port) throws MessagingException, IOException
     {
-        File folder = new File("C:\\mails\\" + username);
+        File folder = new File(Global.mails + username);
 
         boolean ssl = false;
         java.util.Properties properties = new java.util.Properties();
@@ -74,7 +74,14 @@ public class SaveLoad implements Runnable
         if (ssl)
         {
             sslStore = new POP3SSLStore(session, null);
-            sslStore.connect(host, port, email, password);
+            try
+            {
+                sslStore.connect(host, port, email, password);
+            }
+            catch(Exception e)
+            {
+                System.out.println("Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
+            }
             inbox = sslStore.getFolder("INBOX");
         }
         else
@@ -84,9 +91,9 @@ public class SaveLoad implements Runnable
             {
                 store.connect(host, port, email, password);
             }
-            catch(MessagingException m)
+            catch(Exception e)
             {
-                showError("Fehler", "Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
+                System.out.println("Falsche Logindaten\nPrüfen Sie Ihre Eingabe");
             }
             inbox = store.getFolder("INBOX");
         }
@@ -99,8 +106,8 @@ public class SaveLoad implements Runnable
         {
             try
             {
-                messages[i].writeTo(new FileOutputStream("C:\\mails\\"+ username +"\\mail" + (i+1) + ".eml"));
-                setFileCreationDate("C:\\mails\\" + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
+                messages[i].writeTo(new FileOutputStream(Global.mails + username + "\\mail" + (i+1) + ".eml"));
+                setFileCreationDate(Global.mails + username + "\\mail" + (i+1) + ".eml", messages[i].getSentDate());
             }
             catch (IOException ignored)
             {
@@ -111,7 +118,7 @@ public class SaveLoad implements Runnable
 
     public boolean checkData(String username, String host, String email, String password, Integer port) throws MessagingException, IOException
     {
-        File folder = new File("C:\\mails\\" + username);
+        File folder = new File(Global.mails + username);
 
         boolean ssl = false;
         java.util.Properties properties = new java.util.Properties();
@@ -179,11 +186,12 @@ public class SaveLoad implements Runnable
         FileTime time = FileTime.fromMillis(creationDate.getTime());
         attributes.setTimes(time, time, time);
         emlFile.setWritable(false);
+        source.close();
     }
 
     public String loadBody(String directory, String subject) throws MessagingException, IOException
     {
-        String path = "C:\\mails\\" + directory + "\\" + subject + ".eml";
+        String path = Global.mails + directory + "\\" + subject + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
 
@@ -249,17 +257,19 @@ public class SaveLoad implements Runnable
             }
             return text;
         }
+        source.close();
         return "";
     }
 
 
-    public String getSubject(String directory, String name) throws FileNotFoundException, MessagingException {
-        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
+    public String getSubject(String directory, String name) throws IOException, MessagingException {
+        String path = Global.mails + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
         InputStream source = new FileInputStream(emlFile);
         MimeMessage message = new MimeMessage(mailSession, source);
+        source.close();
 
         return message.getSubject();
     }
@@ -326,8 +336,8 @@ public class SaveLoad implements Runnable
         }
     }
 
-    public String getFrom(String directory, String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
+    public String getFrom(String directory, String name) throws MessagingException, IOException {
+        String path = Global.mails + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -351,11 +361,12 @@ public class SaveLoad implements Runnable
                 sender += senderTemp + " ";
             }
         }
+        source.close();
         return sender;
     }
 
-    public String getTo(String directory, String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
+    public String getTo(String directory, String name) throws MessagingException, IOException {
+        String path = Global.mails + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
@@ -386,16 +397,18 @@ public class SaveLoad implements Runnable
         {
 
         }
+        source.close();
         return receiver;
     }
 
-    public String getDate(String directory, String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
+    public String getDate(String directory, String name) throws MessagingException, IOException {
+        String path = Global.mails + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
         InputStream source = new FileInputStream(emlFile);
         MimeMessage message = new MimeMessage(mailSession, source);
+        source.close();
 
         if(message.getSentDate() != null)
         {
@@ -410,24 +423,26 @@ public class SaveLoad implements Runnable
         }
     }
 
-    public Date getSentDate(String directory, String name) throws MessagingException, FileNotFoundException {
-        String path = "C:\\mails\\" + directory + "\\" + name + ".eml";
+    public Date getSentDate(String directory, String name) throws MessagingException, IOException {
+        String path = Global.mails + directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
         InputStream source = new FileInputStream(emlFile);
         MimeMessage message = new MimeMessage(mailSession, source);
+        source.close();
 
         return message.getSentDate();
     }
 
-    public String getHeaderValue(String directory, String name) throws FileNotFoundException, MessagingException {
-        String path = "C:\\mails\\" +directory + "\\" + name + ".eml";
+    public String getHeaderValue(String directory, String name) throws IOException, MessagingException {
+        String path = Global.mails +directory + "\\" + name + ".eml";
         File emlFile = new File(path);
         Properties props = System.getProperties();
         Session mailSession = Session.getDefaultInstance(props, null);
         InputStream source = new FileInputStream(emlFile);
         MimeMessage message = new MimeMessage(mailSession, source);
+        source.close();
 
         return message.getHeader("X-Seen", null );
     }

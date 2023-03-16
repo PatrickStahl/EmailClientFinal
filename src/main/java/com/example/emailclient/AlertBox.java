@@ -12,7 +12,7 @@ public class AlertBox {
     private Label LabelText;
 
     @FXML
-    private Button okButton;
+    protected Button okButton;
 
     @FXML
     void okButtonClicked()

@@ -15,10 +15,13 @@ import javafx.stage.Stage;
 import javax.mail.MessagingException;
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.commons.io.FileUtils;
 
 import static java.lang.Math.abs;
 
@@ -58,13 +61,21 @@ public class MainScreen{
     @FXML
     private Label loadingLabel;
 
+    @FXML
+    private MenuItem creditButton;
+
+    @FXML
+    private MenuItem deleteButton;
+
+    @FXML
+    private MenuItem problemButton;
+
 
 
     @FXML
     void refreshButtonClicked() {
         loadingLabel.setVisible(true);
         loadingBar.setVisible(true);
-        //labelStatus.setText("Aktualisiere...");
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
@@ -78,7 +89,6 @@ public class MainScreen{
             protected void done() {
                 loadingLabel.setVisible(false);
                 loadingBar.setVisible(false);
-                //labelStatus.setText("");
                 try
                 {
                     get();
@@ -106,12 +116,99 @@ public class MainScreen{
         stage.show();
     }
 
+    public void deleteMails() throws IOException, InterruptedException, MessagingException
+    {
+        File folder = new File(Global.mails + "\\" + username);
+        File[] files = folder.listFiles();
+
+        //System.out.println(files.length);
+        for (File file : files)
+        {
+            if (file.getName().endsWith(".eml")) {
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    fis.close();
+                }
+                catch (IOException e)
+                {
+
+                }
+                FileUtils.deleteQuietly(file);
+            }
+        }
+        loadData();
+    }
+
+
     public void initialize() {
         table.getColumns().clear();
         table.setItems(list);
         loadingBar.setVisible(false);
         loadingLabel.setVisible(false);
         initiateCols();
+        deleteButton.setOnAction(e ->
+        {
+            try
+            {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ChoiceWindow.fxml"));
+                Parent root1 = (Parent) fxmlLoader.load();
+                ChoiceWindow choiceWindow = fxmlLoader.getController();
+                choiceWindow.yesButton.setOnMouseClicked(f ->
+                {
+                    try
+                    {
+                        choiceWindow.close();
+                        deleteMails();
+
+                    }
+                    catch (IOException | InterruptedException | MessagingException ex)
+                    {
+                        throw new RuntimeException(ex);
+                    }
+                });
+
+                choiceWindow.noButton.setOnMouseClicked(f ->
+                {
+                    choiceWindow.close();
+                });
+
+                Stage stage = new Stage();
+                stage.setTitle("Mails löschen");
+                stage.setScene(new Scene(root1));
+                stage.setResizable(false);
+                stage.show();
+
+            }
+            catch (IOException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        creditButton.setOnAction(e ->
+        {
+            System.out.println("Credits wuhu");
+        });
+
+        problemButton.setOnAction(g ->
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ProblemScreen.fxml"));
+            try
+            {
+                Parent root1 = (Parent) fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.setTitle("Hilfe");
+                stage.setScene(new Scene(root1));
+                stage.setResizable(false);
+                stage.show();
+
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        });
+
         try
         {
             loadData();
@@ -156,8 +253,8 @@ public class MainScreen{
             {
                 System.out.println(table.getSelectionModel().getSelectedIndex());
                 int index = cell.getIndex();
-                File folder = new File("C:\\mails\\" + username + "\\");
-                //NullpointerException never happens because list is initialized first and error is thrown if user has no emails
+                File folder = new File(Global.mails + username);
+                //NullPointerException never happens because list is initialized first and error is thrown if user has no emails
                 index = abs((index - folder.listFiles().length));
                 String name = "mail" + index;
 
@@ -166,7 +263,7 @@ public class MainScreen{
                     try
                     {
                         loadMail(saveLoad.getSubject(username, name), saveLoad.getFrom(username, name), saveLoad.getTo(username, name), saveLoad.loadBody(username, name));
-                        saveLoad.addHeader("C:\\mails\\" + username + "\\" + name + ".eml", "1", saveLoad.getSentDate(username, name));
+                        saveLoad.addHeader(Global.mails + username + "\\" + name + ".eml", "1", saveLoad.getSentDate(username, name));
                         loadData();
                     }
                     catch (IOException | MessagingException ex)
@@ -188,7 +285,7 @@ public class MainScreen{
     private void loadData() throws MessagingException, IOException {
         list.clear();
         list.removeAll();
-        File folder = new File("C:\\mails\\" + username + "\\");
+        File folder = new File(Global.mails + username + "\\");
         File[] listOfFiles = folder.listFiles();
         if (listOfFiles != null) {
             Arrays.sort(listOfFiles, Comparator.comparingLong(File::lastModified).reversed());
@@ -305,7 +402,7 @@ public class MainScreen{
 
     public void setDirectoryName(String name)
     {
-        File directory = new File("C:\\mails\\" + name);
+        File directory = new File(Global.mails + name);
         if (!directory.exists())
         {
             directory.mkdirs();

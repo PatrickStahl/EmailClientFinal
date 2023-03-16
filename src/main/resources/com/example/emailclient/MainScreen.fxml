@@ -14,24 +14,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="387.0" prefWidth="824.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.emailclient.MainScreen">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Einstellungen">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem fx:id="deleteButton" mnemonicParsing="false" text="Alle Mails löschen" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Hilfe">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem fx:id="problemButton" mnemonicParsing="false" text="Häufige Probleme" />
+                  <MenuItem fx:id="creditButton" mnemonicParsing="false" text="Credits" />
             </items>
           </Menu>
         </menus>
@@ -60,7 +55,7 @@
                   </Button>
                   <AnchorPane prefHeight="55.0" prefWidth="133.0">
                      <children>
-                        <ProgressBar fx:id="loadingBar" layoutX="18.0" layoutY="10.0" prefHeight="18.0" prefWidth="109.0" progress="0.0" />
+                        <ProgressBar fx:id="loadingBar" layoutX="18.0" layoutY="10.0" prefHeight="18.0" prefWidth="109.0" />
                         <Label fx:id="loadingLabel" layoutX="40.0" layoutY="29.0" text="Lade Mails..." />
                      </children>
                   </AnchorPane>
