@@ -94,11 +94,12 @@
             <TextField fx:id="textFieldTo" layoutX="81.0" layoutY="50.0" prefHeight="25.0" prefWidth="251.0" />
             <TextField fx:id="textFieldCC" layoutX="81.0" layoutY="78.0" prefHeight="25.0" prefWidth="251.0" />
             <TextField fx:id="textFieldSubject" layoutX="81.0" layoutY="105.0" prefHeight="25.0" prefWidth="251.0" />
-            <TextArea fx:id="textFieldBody" layoutX="36.0" layoutY="140.0" prefHeight="190.0" prefWidth="590.0" />
-            <Button fx:id="sendButton" layoutX="445.0" layoutY="280.0" mnemonicParsing="false" onAction="#sendButtonClicked" prefHeight="34.0" prefWidth="74.0" text="Senden" />
-            <Button fx:id="addButton" layoutX="339.0" layoutY="78.0" mnemonicParsing="false" onAction="#addButtonClicked" text="Add" />
+            <TextArea fx:id="textFieldBody" layoutX="36.0" layoutY="140.0" prefHeight="160.0" prefWidth="560.0" />
+            <Button fx:id="sendButton" layoutX="36.0" layoutY="309.0" mnemonicParsing="false" onAction="#sendButtonClicked" prefHeight="34.0" prefWidth="74.0" text="Senden" />
+            <Button fx:id="addButton" layoutX="339.0" layoutY="78.0" mnemonicParsing="false" onAction="#addButtonClicked" text="+" />
             <Label fx:id="labelStatus" layoutX="36.0" layoutY="334.0" />
-            <Button fx:id="cancelButton" layoutX="535.0" layoutY="280.0" mnemonicParsing="false" onAction="#cancelButtonClicked" prefHeight="34.0" prefWidth="74.0" text="Abbrechen" />
+            <Label fx:id="ccLabel" layoutX="371.0" layoutY="82.0" text="Kopie-Adresse hinzugefügt" />
+            <Button fx:id="sendButton1" layoutX="122.0" layoutY="309.0" mnemonicParsing="false" onAction="#sendButtonClicked" prefHeight="34.0" prefWidth="74.0" text="Abbrechen" />
       </children>
     </AnchorPane>
   </children>

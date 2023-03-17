@@ -1,5 +1,6 @@
 package com.example.emailclient;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -23,6 +25,7 @@ public class SendMail {
 
     @FXML
     private Label labelStatus;
+
     @FXML
     private Button addButton;
 
@@ -47,6 +50,9 @@ public class SendMail {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private Label ccLabel;
+
 
     String CC = "";
     String username;
@@ -60,6 +66,7 @@ public class SendMail {
             @Override
             public void run()
             {
+                ccLabel.setVisible(false);
                 textFieldTo.requestFocus();
             }
         });
@@ -69,9 +76,16 @@ public class SendMail {
     void addButtonClicked()
     {
         CC += textFieldCC.getText() + ",";
-        labelStatus.setText("Receiver " + textFieldCC.getText() + " added");
-        textFieldCC.setPromptText(CC.substring(0, CC.length()-1));
+//        labelStatus.setText("Receiver " + textFieldCC.getText() + " added");
+//        textFieldCC.setPromptText(CC.substring(0, CC.length()-1));
         textFieldCC.setText("");
+        ccLabel.setVisible(true);
+        FadeTransition fadeTransition = new FadeTransition();
+        fadeTransition.setDuration(Duration.millis(3000));
+        fadeTransition.setNode(ccLabel);
+        fadeTransition.setFromValue(1);
+        fadeTransition.setToValue(0);
+        fadeTransition.play();
     }
 
     @FXML
@@ -91,6 +105,11 @@ public class SendMail {
         {
             try
             {
+                if(textFieldCC.getText() != null)
+                {
+                    CC += textFieldCC.getText();
+                }
+
                 send(textFieldFrom.getText(), textFieldTo.getText(), CC, textFieldSubject.getText(), textFieldBody.getText());
                 Stage window = (Stage) sendButton.getScene().getWindow();
                 window.close();
